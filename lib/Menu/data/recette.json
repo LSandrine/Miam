@@ -1,0 +1,30 @@
+{"Recette":{
+    "Chili Con Carne" :{
+      "titre": "Chili Con Carne",
+      "ingredients":  ["Viande_Boeuf","Tomate","Poivron","Oignon","Haricot_Rouge","Riz","Carotte","Epice_Chili"] ,
+      "tmpCuisson": "0,5",
+      "tmpPreparation": "0,5" ,
+      "calories": "101",
+      "estEquilibre": "PARFAIT",
+      "etapes": ["Couper les legumes","Cuire la viande","Ajouter epices","Mijoter 10min"] ,
+    },
+    "Chili Sin Carne" :{
+      "titre": "Chili Sin Carne",
+      "ingredients":  ["Tomate","Poivron","Oignon","Haricot_Rouge","Riz","Carotte","Epice_Chili"] ,
+      "tmpCuisson": "0,5",
+      "tmpPreparation": "0,5" ,
+      "calories": "101",
+      "estEquilibre": "PARFAIT",
+      "etapes": ["Couper les legumes","Cuire les legumes","Ajouter epices","Mijoter 10min"] ,
+    },
+    "Curry de crevette" :{
+      "titre": "Curry de crevette",
+      "ingredients":  ["Crevette","Creme_Coco","Epice_Curry","Oignon","RIZ","Carotte","Poireau"] ,
+      "tmpCuisson": "0,5",
+      "tmpPreparation": "0,5" ,
+      "calories": "305",
+      "estEquilibre": "MODERE",
+      "etapes": ["Couper les legumes","Cuire les crevettes","Ajouter epices","Mijoter 10min"] ,
+    }
+  }
+}
