@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:miam/Menu/menu.dart';
+// Remise du projet le 30 janvier
+// code (repo github)
+// video au moins 10 min par groupe, comment elle est codé. pourquoi ? et expliquer
+// assurer qu'on a assimilé des notions de flutter => justifier nos choix
 
-void main() {
+
+
+void  main() async {
   runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
 }
 
 class MyApp extends StatelessWidget {
@@ -20,4 +27,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 

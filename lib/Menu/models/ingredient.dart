@@ -1,16 +1,53 @@
 class Ingredient{
-  Ingredient(this.nom,this.quantite);
-  final Element nom;
+  final int id;
+  final ElementIg nom;
   final double quantite;
 
+  const Ingredient({
+    required this.id,
+    required this.nom,
+    required this.quantite,
+  });
+
+  Map<String,dynamic> toMap(){
+    return{
+      'id':id,
+      'nom':nom,
+      'quantite':quantite,
+    };
+  }
   @override
-  String toString() {
-    // TODO: implement toString
-    return nom.toString();
+  String toString(){
+    return 'Ingredient{id:$id,nom:$nom,quantite:$quantite}';
   }
 }
 
-enum Element{
+
+class ElementIg{
+  final int id;
+  final String nom;
+
+  //ElementIg(this.id,this.nom);
+
+  const ElementIg({
+    required this.id,
+    required this.nom,
+  });
+
+
+  Map<String,dynamic> toMap(){
+    return{
+      'id':id,
+      'nom':nom,
+    };
+  }
+  @override
+  String toString(){
+    return 'ElementIg{id:$id,nom:$nom}';
+  }
+}
+/*
+enum ElementIg{
   Viande_poulet,
   Viande_Boeuf,
   Viande_Porc,
@@ -31,3 +68,4 @@ enum Element{
   Creme_Coco,
   Poireau
 }
+*/
