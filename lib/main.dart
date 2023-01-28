@@ -1,79 +1,28 @@
-import 'package:finalcuisine/pages/add_menu_page.dart';
-import 'package:finalcuisine/pages/home_page.dart';
-import 'package:finalcuisine/pages/listes_courses.dart';
-import 'package:finalcuisine/pages/menu_page.dart';
 import 'package:flutter/material.dart';
+import 'package:miam/Menu/menu.dart';
+// Remise du projet le 30 janvier
+// code (repo github)
+// video au moins 10 min par groupe, comment elle est codé. pourquoi ? et expliquer
+// assurer qu'on a assimilé des notions de flutter => justifier nos choix
 
-//import 'package:flutter_svg/flutter_svg.dart';
-void main() {
+//scr cpy
+void  main() async {
   runApp(const MyApp());
-
+  WidgetsFlutterBinding.ensureInitialized();
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-
-  int _currentIndex = 0;
-
-  setCurrentIndex(int index){
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: [
-              Text("Accueil"),
-              Text("Listes des menus "),
-              Text("Ajouts des menus"),
-              Text("listes des courses")
-
-            ][_currentIndex],
-          ),
-          body: [
-            HomePage(),
-            MenuPage(),
-            AddMenuPage(),
-            ListesCourses()
-          ][_currentIndex],
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) => setCurrentIndex(index),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.green,
-            unselectedItemColor: Colors.grey,
-            iconSize: 32,
-            elevation: 10,
-            items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Accueil'
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_month),
-                  label: 'Menu'
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'Ajout_Menu'
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_basket),
-                  label: 'courses'
-              ),
-            ],
-          ),
-        )
+      title: 'Miam',
+      theme: ThemeData(
+        primarySwatch: Colors.lightGreen,
+      ),
+      home: const MenuPage(),
     );
   }
 }
