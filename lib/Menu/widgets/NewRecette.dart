@@ -168,7 +168,7 @@ class _newRecetteState extends State<newRecette> {
           SizedBox(
             height: 20,
             child: Text(
-                '${recette != null ? 'Modifier ' : 'Ajouter '}une Recette ${elements.length}'),
+                '${recette != null ? 'Modifier ' : 'Ajouter '}une Recette'),
           ),
           Form(
             key: formKey,

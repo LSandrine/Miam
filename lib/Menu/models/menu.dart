@@ -39,13 +39,17 @@ class Menu {
 
   Future<Map<String,double>> getListIngredients() async{
     List<int> allIdRecette = (List.generate(recettes.length,(i) {return recettes[i].id;}));
+    //print(allIdRecette);
     Map<String,double> lIgQtt = {};
     for(var idR in allIdRecette){
       List<Ingredient> tmp = await DatabaseHelper.getIngredientsByRecette(idR);
       for(Ingredient ig in tmp){
-        lIgQtt[ig.elementIg.nom] = ig.quantite;
+        var el = await DatabaseHelper.getElementIg(ig.elementIg.id);
+        //print(el);
+        lIgQtt[el.nom] = ig.quantite;
       }
     }
+    //print('ici '+lIgQtt.length.toString());
     return lIgQtt;
   }
 

@@ -226,7 +226,7 @@ class DatabaseHelper {
     return List.generate(res.length, (i) {
       return Ingredient(
           id: res[i]['idRecette'],
-          elementIg: (getElementIg(res[i]['idElement']) as ElementIg),
+          elementIg: ElementIg(id:res[i]['idElement'],nom: '') ,
           quantite: res[i]['quantite']);
     });
   }

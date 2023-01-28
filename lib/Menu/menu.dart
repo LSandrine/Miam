@@ -62,7 +62,8 @@ class _MenuPageState extends State<MenuPage> {
       return newRecette(elements: _elements,);
     }
     if(index == 3) {
-      return listIngredient(menus: _menus);
+      //return listRecette(recettes: _recettes);
+      return listIngredient(menu: _menus.last);
     }
     return Text('error' + index.toString());
   }

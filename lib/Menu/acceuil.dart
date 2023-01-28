@@ -35,14 +35,13 @@ class _accueilPageState extends State<accueilPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
       Container(
-        height: 50.0,
+        height: 100,
+        width: 300,
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
-          border: Border.all(
-            color: Colors.white,
-            width: 1.0,),),
-        child: const Text("Bienvenue sur Miam !"),
-      ),const SizedBox(height: 30),
+          color:Colors.white ,borderRadius: BorderRadius.circular(10.0)),
+        child: const Center(child: Text("Bienvenue sur Miam !",style:TextStyle(fontSize: 35,fontWeight: FontWeight.bold,color: Colors.green), ),),
+      ),const SizedBox(height: 150),
       SizedBox(height: 100,width: 100 ,
         child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(50.0),)),
           onPressed: () => createMenu(), child: const Icon(Icons.restart_alt,color: Colors.white,size: 65,)),)
