@@ -5,12 +5,12 @@ class Recette {
 
   final int id;
   final String titre;
-  final List<String> etapes;
+  final String etapes;
   final List<Ingredient> ingredients;
   final double tmpPreparation;
   final double tmpCuisson;
   final double calories;
-  final Equilibre estEquilibre;
+  final String estEquilibre;
 
   const Recette({
     required this.id,

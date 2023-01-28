@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:miam/Menu/widgets/NouveauIngredient.dart';
+import 'package:miam/Menu/widgets/NewIngredient.dart';
+import 'package:miam/Menu/widgets/NewRecette.dart';
+import 'package:miam/Menu/widgets/listIngredients.dart';
+import 'package:miam/Menu/widgets/listMenu.dart';
+import 'package:miam/Menu/widgets/listRecette.dart';
+import 'acceuil.dart';
 import 'data/database_helper.dart';
 import 'models/ingredient.dart';
+import 'package:miam/Menu/models/menu.dart';
+import 'models/recette.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key}) : super(key: key);
@@ -10,17 +17,20 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  List<Map<String, dynamic>> myData = [];
   List<ElementIg> _elements = [];
-  final formKey = GlobalKey<FormState>();
+  List<Recette> _recettes = [];
   bool _isLoading = true;
+  int _selectedIndex = 0;
+  List<Menu> _menus = [];
   // This function is used to fetch all data from the database
   void _refreshData() async {
-    final data = await DatabaseHelper.getItems();
+    final menus = await DatabaseHelper.getMenus();
     final elements = await DatabaseHelper.getElementIgs();
+    final recettes = await DatabaseHelper.getRecettes();
     setState(() {
-      myData = data;
       _elements = elements;
+      _menus = menus;
+      _recettes = recettes;
       _isLoading = false;
     });
   }
@@ -28,220 +38,64 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void initState() {
     super.initState();
-    _refreshData(); // Loading the data when the app starts
-  }
-
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-
-  // This function will be triggered when the floating button is pressed
-  // It will also be triggered when you want to update an item
-  void showMyForm(int? id) async {
-    // id == null -> create new item
-    // id != null -> update an existing item
-    if (id != null) {
-      final existingData = myData.firstWhere((element) => element['id'] == id);
-      _titleController.text = existingData['title'];
-      _descriptionController.text = existingData['description'];
-    } else {
-      _titleController.text = "";
-      _descriptionController.text = "";
-    }
-
-    showModalBottomSheet(
-        context: context,
-        elevation: 5,
-        isDismissible: false,
-        isScrollControlled: true,
-        builder: (_) => Container(
-            padding: EdgeInsets.only(
-              top: 15,
-              left: 15,
-              right: 15,
-              // prevent the soft keyboard from covering the text fields
-              bottom: MediaQuery.of(context).viewInsets.bottom + 120,
-            ),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextFormField(
-                    controller: _titleController,
-                    validator: formValidator,
-                    decoration: const InputDecoration(hintText: 'Title'),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    validator: formValidator,
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(hintText: 'Description'),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Exit")),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            if (id == null) {
-                              await addItem();
-                            }
-
-                            if (id != null) {
-                              await updateItem(id);
-                            }
-
-                            // Clear the text fields
-                            setState(() {
-                              _titleController.text = '';
-                              _descriptionController.text = '';
-                            });
-
-                            // Close the bottom sheet
-                            Navigator.pop(context);
-                          }
-                          // Save new data
-                        },
-                        child: Text(id == null ? 'Create New' : 'Update'),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            )));
+    _refreshData();// Loading the data when the app starts
   }
 
   String? formValidator(String? value) {
     if (value!.isEmpty) return 'Field is Required';
     return null;
   }
-
-// Insert a new data to the database
-  Future<void> addItem() async {
-    await DatabaseHelper.createItem(
-        _titleController.text, _descriptionController.text);
-    _refreshData();
+  void _onItemTapped(int index){
+    setState(() {
+      _selectedIndex = index;
+    });
   }
-
-  // Update an existing data
-  Future<void> updateItem(int id) async {
-    await DatabaseHelper.updateItem(
-        id, _titleController.text, _descriptionController.text);
+  Widget _pages (index){
     _refreshData();
+    if(index == 0) {
+      return accueilPage();
+    }
+    if(index == 1) {
+      return listMenu(menus: _menus);
+    }
+    if(index == 2) {
+      return newRecette(elements: _elements,);
+    }
+    if(index == 3) {
+      return listIngredient(menus: _menus);
+    }
+    return Text('error' + index.toString());
   }
-
-  // Delete an item
-  void deleteItem(int id) async {
-    await DatabaseHelper.deleteItem(id);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Successfully deleted!'), backgroundColor: Colors.green));
-    _refreshData();
-  }
-
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
       length: 3,
       initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Miam !'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.restaurant_menu)),
-              Tab(icon: Icon(Icons.menu_book)),
-              Tab(icon: Icon(Icons.receipt_long)),
-            ],
-          ),
+          title:  const Text('Miam !',style: TextStyle(color: Colors.white),),
+          backgroundColor: Colors.green,
+          elevation: 0,
         ),
-        body: TabBarView(children: [
-          _isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : myData.isEmpty
-                  ? const Center(child: Text("No Data Available!!!"))
-                  : ListView.builder(
-                      itemCount: myData.length,
-                      itemBuilder: (context, index) => Card(
-                        color:index % 2 == 0 ? Colors.green : Colors.green[200],
-                        margin: const EdgeInsets.all(15),
-                        child: ListTile(
-                            title: Text(myData[index].toString()),
-                            trailing: SizedBox(
-                              width: 100,
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    onPressed: () =>
-                                        showMyForm(myData[index]['id']),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    onPressed: () =>
-                                        deleteItem(myData[index]['id']),
-                                  ),
-                                ],
-                              ),
-                            )),
-                      ),
-                    ),
-          NouveauIngredient(),
-          ListView.builder(
-            itemCount: _elements.length,
-            itemBuilder: (context, index) => Card(
-              color:index % 2 == 0 ? Colors.green : Colors.green[200],
-              margin: const EdgeInsets.all(15),
-              child: ListTile(
-                  title: Text(_elements[index].toString()),
-                  trailing: SizedBox(
-                    width: 100,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () =>
-                              _refreshData(),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () =>
-                              _refreshData(),
-                        ),
-                      ],
-                    ),
-                  )),
-            ),
-          ),
-
-        ]),
-        floatingActionButton: Row(
-          children: [
-            FloatingActionButton(
-              child: const Icon(Icons.add),
-              onPressed: () => showMyForm(null),
-            ),
-            FloatingActionButton(
-              child: const Icon(Icons.send),
-              onPressed: () => showMyForm(null),
-            ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.shifting,
+          backgroundColor: Colors.green,
+          elevation: 0,
+          iconSize: 20,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white54,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(label: 'acc',icon: Icon(Icons.home_outlined),backgroundColor: Colors.green),
+            BottomNavigationBarItem(label: 'menu',icon: Icon(Icons.restaurant_menu),backgroundColor: Colors.green),
+            BottomNavigationBarItem(label: 'addRecette',icon: Icon(Icons.menu_book),backgroundColor: Colors.green),
+            BottomNavigationBarItem(label: 'list Ig',icon: Icon(Icons.receipt_long),backgroundColor: Colors.green),
           ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
+        body: Center(
+          child: _pages(_selectedIndex),// _pages.elementAt(_selectedIndex),
         ),
       ),
     );

@@ -1,24 +1,24 @@
 class Ingredient{
   final int id;
-  final ElementIg nom;
+  final ElementIg elementIg;
   final double quantite;
 
   const Ingredient({
     required this.id,
-    required this.nom,
+    required this.elementIg,
     required this.quantite,
   });
 
   Map<String,dynamic> toMap(){
     return{
       'id':id,
-      'nom':nom,
+      'elementIg':elementIg,
       'quantite':quantite,
     };
   }
   @override
   String toString(){
-    return 'Ingredient{id:$id,nom:$nom,quantite:$quantite}';
+    return 'Ingredient{id:$id,elementIg:$elementIg,quantite:$quantite}';
   }
 }
 

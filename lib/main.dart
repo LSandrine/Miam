@@ -5,8 +5,7 @@ import 'package:miam/Menu/menu.dart';
 // video au moins 10 min par groupe, comment elle est codé. pourquoi ? et expliquer
 // assurer qu'on a assimilé des notions de flutter => justifier nos choix
 
-
-
+//scr cpy
 void  main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
