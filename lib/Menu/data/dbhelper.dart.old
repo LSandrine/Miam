@@ -1,0 +1,51 @@
+import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import '../models/ingredient.dart';
+
+class DatabaseHelper{
+  static final _databaseName = "miam_database.db";
+  static final _databaseVersion = 1;
+
+  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+
+  late Database _database;
+  Future<Database> get database async {
+    if(_database != null) return _database;
+    _database = await _initDatabase();
+    return _database;
+  }
+
+  _initDatabase() async {
+    String path = join(await getDatabasesPath(), 'miam_database.db');
+    return await openDatabase(path,version: _databaseVersion,onCreate: _onCreate);
+  }
+
+  Future _onCreate(Database db, int version) async {
+    await db.execute('CREATE TABLE ElementIg(id INTEGER PRIMARY KEY, nom TEXT)');
+    await db.execute('CREATE TABLE Ingredient(id INTEGER PRIMARY KEY, idElement INTEGER, quantite DOUBLE, FOREIGN KEY (idElement) REFERENCES ElementIg(id) )');
+    await db.execute('CREATE TABLE Recette(id INTEGER PRIMARY KEY, titre TEXT, etapes TEXT, tmpPreparation DOUBLE, tmpCuisson DOUBLE, calories DOUBLE, estEquilibre TEXT)  )');
+    await db.execute('CREATE TABLE IngredientInRecette(idRecette INTEGER,idIngredient INTEGER, PRIMARY KEY (idRecette, idIngredient), FOREIGN KEY (idRecette) REFERENCES Recette(id),FOREIGN KEY (idIngredient) REFERENCES Ingredient(id) ) ');
+  }
+
+  Future<int> insertElement(ElementIg element) async {
+    Database db = await instance.database;
+    return await db.insert('elements',element.toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+  Future<List<ElementIg>> elements() async {
+    final db = await instance.database;
+    final List<Map<String,dynamic>> maps = await db.query('elements');
+    return List.generate(maps.length,(i) {
+      return ElementIg(id: maps[i]['id'], nom: maps[i]['nom']);
+    });
+  }
+  Future<int> updateElement(ElementIg element) async {
+    final db = await instance.database;
+    return await db.update('elements', element.toMap(),where: 'id=?',whereArgs: [element.id]);
+  }
+  Future<int> deleteElement(int id) async {
+    final db = await instance.database;
+    return await db.delete('elments',where: 'id=?',whereArgs: [id]);
+  }
+}
