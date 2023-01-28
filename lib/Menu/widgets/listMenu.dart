@@ -8,10 +8,15 @@ class listMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /*
+      Initialisation/Declaration des variables
+      Test des parametres
+   */
     const List<String> _jours = ["Lundi Midi","Lundi Soir","Mardi Midi","Mardi Soir", "Mercredi Midi", "Mercredi Soir","Jeudi Midi","Jeudi Soir","Vendredi Midi","Vendredi Soir","Samedi Midi","Samedi Soir","Dimanche Midi","Dimanche Soir"];
     if (this.menus != null) {
       Menu? menu = this.menus?.last;
       if (menu != null) {
+        /* return widget*/
         return Center(
           child: ListView.builder(
               itemCount: menu.recettes.length, itemBuilder: (context, i) {

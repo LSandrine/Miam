@@ -53,28 +53,10 @@ class _newRecetteState extends State<newRecette> {
 
 
   String qtt = '0';
-  //bottomForm
+  /*
+   *
+   */
   void bottomForm(List<ElementIg> _elementsIg) {
-    /*if (id != null) {
-      final existingData = myData.firstWhere((element) => element['id'] == id);
-      _titleController.text = existingData['title'];
-      _descriptionController.text = existingData['description'];
-    } else {
-      _titleController.text = "";
-      _descriptionController.text = "";
-    }*/
-
-    /*
-    _elementsIg.map<DropdownMenuItem<String>>((ElementIg elem) {
-      return DropdownMenuItem<String>(
-        value: elem.id.toString(),
-        child: Text(
-          elem.nom,
-          style: const TextStyle(fontSize: 20),
-        ),
-      );
-    }).toList();
-    */
     ElementIg _selectedElement = _elementsIg.first;
     final TextEditingController qController = TextEditingController();
     qController.text = "";
@@ -85,7 +67,6 @@ class _newRecetteState extends State<newRecette> {
         child: Text(item.nom),
       );
     }).toList();
-
     // if list is empty, create a dummy item
     if (items.isEmpty) {
       items = [
@@ -106,7 +87,7 @@ class _newRecetteState extends State<newRecette> {
               top: 15,
               left: 15,
               right: 15,
-              // prevent the soft keyboard from covering the text fields
+              // attention le clavier ne doit pas couvrir les fields
               bottom: MediaQuery.of(context).viewInsets.bottom + 120,
             ),
             child: Column(
@@ -133,6 +114,7 @@ class _newRecetteState extends State<newRecette> {
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () {
+                          // Close the bottomForm
                           Navigator.pop(context);
                         },
                         child: const Text("Annuler")),
@@ -140,10 +122,9 @@ class _newRecetteState extends State<newRecette> {
                       onPressed: () async {
                         ElementIg el =_selectedElement;
                         Ingredient ig = Ingredient(id: 0, elementIg: el, quantite: double.parse(_quantite));
+                        // Ajouter aux ingrédients
                         listIngredient.add(ig);
-
-
-                        // Close the bottom sheet
+                        // Close the bottomForm
                         Navigator.pop(context);
                       },
                       child: Text('Ajouter un ingrédient'),
@@ -158,6 +139,7 @@ class _newRecetteState extends State<newRecette> {
   //
   @override
   Widget build(BuildContext context) {
+    //return widget
     return Container(
         padding: const EdgeInsets.only(
           top: 15,
@@ -242,7 +224,6 @@ class _newRecetteState extends State<newRecette> {
                           ),
                           onPressed: () {
                             clearField();
-                            //Navigator.pop(context);
                           },
                           child: const Text("Annuler")),
                       ElevatedButton(
@@ -255,8 +236,6 @@ class _newRecetteState extends State<newRecette> {
                               await updateRecette(recette!.id);
                             }
                             clearField();
-                            // Close the bottom sheet
-                            //Navigator.pop(men);
                           }
                         },
                         child: Text(recette == null ? 'Créer' : 'Sauvegarder'),
@@ -264,20 +243,29 @@ class _newRecetteState extends State<newRecette> {
                     ]),
               ],
             ),
-          ),Text('test ${listIngredient.length}'),
+          ),
           FloatingActionButton(
-            child: const Icon(Icons.send),
+            child: const Icon(Icons.add_box_sharp,color: Colors.white,),
             onPressed: () => bottomForm(elements),
           ),
 
         ],)
     );
   }
+  /*
+   * Function de validation des champ text
+   * @param String, valeur à tester.
+   * @return String, text d'information en cas de problem, null sinon.
+   */
   String? formValidatorText(String? value) {
     if (value!.isEmpty) return 'Field is Required';
     return null;
   }
-
+/*
+   * Function de validation des champ double
+   * @param String, valeur à transformer en double.
+   * @return String, text d'information en cas de problem, null sinon.
+   */
   String? formValidatorDouble(String? value) {
     if (value!.isEmpty) return 'Field is Required';
     try {
@@ -291,6 +279,9 @@ class _newRecetteState extends State<newRecette> {
 
 // Insert a new data to the database
 
+  /*
+   * Fonction d'ajout d'une recette en bd.
+   */
   Future<void> addRecette() async {
     int idR = await DatabaseHelper.createRecette(
         _titreController.text, _etapesController.text, double.parse(_tmpPreparationController.text),
@@ -302,14 +293,20 @@ class _newRecetteState extends State<newRecette> {
 
   }
 
-  // Update an existing data
+  /*
+   * Fonction de modification d'une recette en bd.
+   * @param int, id de la ligne a modifier.
+   */
   Future<void> updateRecette(int id) async {
     await DatabaseHelper.updateRecette(id,
         _titreController.text, _etapesController.text, double.parse(_tmpPreparationController.text),
         double.parse(_tmpCuissonController.text), double.parse(_caloriesController.text), _estEquilibreController.text);
   }
 
-  // Delete an item
+  /*
+   * Fonction supprimer une recette en bd.
+   * @param int, id de la ligne a supprimer.
+   */
   void deleteRecette(int id) async {
     await DatabaseHelper.deleteRecette(id);
     print('delete OK');

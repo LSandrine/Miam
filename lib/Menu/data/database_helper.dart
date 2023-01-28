@@ -6,6 +6,9 @@ import '../models/menu.dart';
 import '../models/recette.dart';
 
 class DatabaseHelper {
+  /*
+   * SINGLETON (Create and Getter de l'instance sql.Database).
+   */
   static Future<sql.Database> db() async {
     return sql.openDatabase(
       'miammiam.db',
@@ -17,14 +20,19 @@ class DatabaseHelper {
     );
   }
 
+  /*
+   * Création des 4 tables de données [ ElementIg,Recette,Ingredient,Menu].
+   */
   static Future<void> createTables(sql.Database db) async {
-    await db.execute("""CREATE TABLE items( id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,title TEXT,description TEXT, createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)""");
     await db.execute("""CREATE TABLE ElementIg(	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,	nom TEXT);""");
     await db.execute("""CREATE TABLE Recette(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, titre TEXT, etapes TEXT, tmpPreparation DOUBLE, tmpCuisson DOUBLE, calories DOUBLE, estEquilibre TEXT)  """);
     await db.execute("""CREATE TABLE Ingredient(idRecette INTEGER, idElement INTEGER, quantite DOUBLE,PRIMARY KEY (idElement, idRecette), FOREIGN KEY (idRecette) REFERENCES Recette(id), FOREIGN KEY (idElement) REFERENCES ElementIg(id) ) """);
     await db.execute("""CREATE TABLE Menu(idMenu INTEGER, idRecette INTEGER, PRIMARY KEY (idMenu, idRecette), FOREIGN KEY (idRecette) REFERENCES Recette(id),FOREIGN KEY (idMenu) REFERENCES Menu(id)  )""");
   }
 
+  /*
+   * Insertion de jeu de données dans les 4 tables de données [ ElementIg,Recette,Ingredient,Menu].
+   */
   static Future<void> insertDatas(sql.Database db) async {
     await db.execute("""INSERT INTO ElementIg(nom) VALUES ('Viande_poulet'),('Viande_Boeuf'),('Viande_Porc'),('Poisson_Gras'),('Poisson_Maigre'),('Courgette'),('Tomate'),('Oignon'),('Pates'),('Haricot_Rouge'),('Riz'),('Ail'),('Carotte'),('Poivron'),('Crevette'),('Epice_Curry'),('Epice_Chili'),('Creme_Coco'),('Poireau'); """);
     await db.execute("""INSERT INTO Recette(titre,etapes,tmpPreparation,tmpCuisson,calories,estEquilibre) VALUES ('Chili con carne','',30.0,30.0,352,'PARFAIT'),('Chili sin carne','',30.0,30.0,352,'MODERE'),('Lasagne chevre courgette','',35.0,45.0,352,'IMPARFAIT'),('Nouilles sautées','',45.0,45.0,352,'PARFAIT'),('Tomates farcies','',60.0,30.0,352,'MODERE'),('Paella Express','',60.0,30.0,352,'IMPARFAIT'),('Rougail saucisse','',60.0,30.0,352,'IMPARFAIT'),('Crevette miel sésame','',60.0,30.0,352,'MODERE'),('Curry de crevettes','',60.0,30.0,352,'MODERE'),('Curry de courgette','',60.0,30.0,352,'PARFAIT'),('Blanquette de veau','',60.0,30.0,352,'MODERE'),('Flammekueche','',60.0,30.0,352,'MODERE'),('Gnocchis poulet','',60.0,30.0,352,'MODERE'),('Salade de pois','',60.0,30.0,352,'PARFAIT'),('Pizzas','',75.0,30.0,600,'IMPARFAIT'),('Quiche brocolis','',60.0,45.0,300,'PARFAIT'),('Soupe Mexican','',60.0,30.0,200,'PARFAIT'),('Ramen chicken','',60.0,30.0,200,'MODERE'),('Mapo tofu','',60.0,30.0,352,'MODERE'),('Carbonara','',60.0,30.0,352,'MODERE'),('Jambalaya','',30.0,30.0,600,'IMPARFAIT'),('Brique Courgette Curry','',60.0,30.0,352,'MODERE'),('Quiches du soleil','',60.0,30.0,352,'PARFAIT'); """);
@@ -32,53 +40,23 @@ class DatabaseHelper {
     await db.execute("""INSERT INTO Menu(idMenu,idRecette) VALUES (1,1),(2,1),(3,1),(4,1),(4,2),(3,2),(2,2),(1,2),(1,3),(4,3);""");
   }
 
-  //// ITEMS
-  static Future<int> createItem(String? title, String? descrption) async {
-    final db = await DatabaseHelper.db();
-    final data = {'title': title, 'description': descrption};
-    return await db.insert('items', data,
-        conflictAlgorithm: sql.ConflictAlgorithm.replace);
-  }
-
-  static Future<List<Map<String, dynamic>>> getItems() async {
-    final db = await DatabaseHelper.db();
-    return db.query('items', orderBy: "id");
-  }
-
-  static Future<List<Map<String, dynamic>>> getItem(int id) async {
-    final db = await DatabaseHelper.db();
-    return db.query('items', where: "id = ?", whereArgs: [id], limit: 1);
-  }
-
-  static Future<int> updateItem(
-      int id, String title, String? descrption) async {
-    final db = await DatabaseHelper.db();
-    final data = {
-      'title': title,
-      'description': descrption,
-      'createdAt': DateTime.now().toString()
-    };
-    return await db.update('items', data, where: "id = ?", whereArgs: [id]);
-  }
-
-  static Future<void> deleteItem(int id) async {
-    final db = await DatabaseHelper.db();
-    try {
-      await db.delete("items", where: "id = ?", whereArgs: [id]);
-    } catch (err) {
-      debugPrint("Something went wrong when deleting an item: $err");
-    }
-  }
-  //// ITEMS
 
   //// ELEMENTSIG
+  /*
+   * Fonction d'insertion d'une nouvelle ligne de data pour la table ElementIg.
+   * @param String, nom du nouvelle element.
+   * @return int, id inserted.
+   */
   static Future<int> createElementIg(String? nom) async {
     final db = await DatabaseHelper.db();
     final data = {'nom': nom};
     return await db.insert('ElementIg', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
   }
-
+  /*
+   * Fonction query select all sur la table ElementIg.
+   * @return List of ElementIg, une liste composé des éléments enregistré en bd sous forme de class ElementIg.
+   */
   static Future<List<ElementIg>> getElementIgs() async {
     final db = await DatabaseHelper.db();
     final List<Map<String, dynamic>> res =
@@ -87,20 +65,32 @@ class DatabaseHelper {
       return ElementIg(id: res[i]['id'], nom: res[i]['nom']);
     });
   }
-
+  /*
+   * Fonction query select 1 sur la table ElementIg.
+   * @param int, id de l'élément recherché.
+   * @return ElementIg, l'élément correspondant à l'id.
+   */
   static Future<ElementIg> getElementIg(int id) async {
     final db = await DatabaseHelper.db();
     final List<Map<String, dynamic>> res =
         await db.query('ElementIg', where: "id = ?", whereArgs: [id], limit: 1);
     return ElementIg(id: res[0]['id'], nom: res[0]['nom']);
   }
-
+  /*
+   * Fonction query modifié une ligne de la table ElementIg.
+   * @param int, id de l'élément a modifié.
+   * @param string, nom de l'élément modifié.
+   * @return int, id updated.
+   */
   static Future<int> updateElementIg(int id, String nom) async {
     final db = await DatabaseHelper.db();
     final data = {'nom': nom};
     return await db.update('ElementIg', data, where: "id = ?", whereArgs: [id]);
   }
-
+  /*
+   * Fonction query delete 1 sur la table ElementIg.
+   * @param int, id de l'élément a supprimé.
+   */
   static Future<void> deleteElementIg(int id) async {
     final db = await DatabaseHelper.db();
     try {
@@ -113,6 +103,10 @@ class DatabaseHelper {
 
   //// RECETTES
   //
+
+  /*
+   * Fonction d'insertion d'une nouvelle ligne de data pour la table Recette.
+   */
   static Future<int> createRecette(
       String titre,
       String etapes,
@@ -196,6 +190,10 @@ class DatabaseHelper {
   ////
 
   //// INGREDIENTS
+
+  /*
+   * Fonction d'insertion d'une nouvelle ligne de data pour la table Recette.
+   */
   static Future<int> createIngredient(
       int idRecette, int idElementIg, double quantite) async {
     final db = await DatabaseHelper.db();
@@ -264,6 +262,10 @@ class DatabaseHelper {
   //// INGREDIENTS
 
   //// MENU
+
+  /*
+   * Fonction d'insertion d'une nouvelle ligne de data pour la table Recette.
+   */
   static Future<int> createMenu(int idMenu, int idRecette) async {
     final db = await DatabaseHelper.db();
     final data = {'idMenu': idMenu, 'idRecette': idRecette};

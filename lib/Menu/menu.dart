@@ -17,12 +17,18 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  /*
+  Initialisation/Declaration des variables
+   */
   List<ElementIg> _elements = [];
   List<Recette> _recettes = [];
   bool _isLoading = true;
   int _selectedIndex = 0;
   List<Menu> _menus = [];
-  // This function is used to fetch all data from the database
+
+  /*
+   * Fonction qui permet de récupérer les données de la base et de les stocker dans différente variable.
+   */
   void _refreshData() async {
     final menus = await DatabaseHelper.getMenus();
     final elements = await DatabaseHelper.getElementIgs();
@@ -38,18 +44,23 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void initState() {
     super.initState();
-    _refreshData();// Loading the data when the app starts
+    _refreshData();// Charger les données (when the app starts)
   }
 
-  String? formValidator(String? value) {
-    if (value!.isEmpty) return 'Field is Required';
-    return null;
-  }
+  /*
+   * Fonction d'event de l'obj BottomNavigationBar, modifie la var _selectedIndex quand l'obj est tapé.
+   * @param int, l'item sélectionné.
+   */
   void _onItemTapped(int index){
     setState(() {
       _selectedIndex = index;
     });
   }
+  /*
+   * Return un widget en fonction de l'index souhaité.
+   * @param int, index de page souhaité.
+   * @return widget, widget souhaité.
+   */
   Widget _pages (index){
     _refreshData();
     if(index == 0) {

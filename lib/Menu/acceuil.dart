@@ -15,18 +15,24 @@ class accueilPage extends StatefulWidget {
 class _accueilPageState extends State<accueilPage> {
   final _rng = Random();
 
+  /*
+   * Generation d'un menu de 14 recette et enregistrement en bd.
+   */
   Future<void> createMenu() async {
-    var menus = await DatabaseHelper.getMenus2();
+    // load all recettes
     List<Recette> recettes = await DatabaseHelper.getRecettes();
+    // get last id inserted dans la table Menu
     int IdM = (await DatabaseHelper.getLastIdMenu())+1;
-    //var _rngId = List.generate(16, (_) => _rng.nextInt(recettes.length));
+    // Creation d'une liste de tous les id
     List<int> _rngId = List<int>.generate(recettes.length, (i) => i + 1);
+    //shuffle la liste pour obtenir un menu different
     _rngId.shuffle();
+    // conserve les 14 premiers id pour les 14 recettes du menu
     _rngId = _rngId.sublist(0,13);
+    // add dans la bd le nouveau menu
     for(var idR in _rngId){
       var r = await DatabaseHelper.createMenu(IdM, idR);
     }
-    menus = await DatabaseHelper.getMenus2();
   }
 
   @override

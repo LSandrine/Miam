@@ -12,10 +12,17 @@ class listIngredient extends StatefulWidget {
 }
 
 class _listIngredientState extends State<listIngredient> {
+  /* Parameter de la page */
   Menu menu;
   _listIngredientState({required this.menu});
+  /*
+  Initialisation/Declaration des variables
+   */
   List<bool> chk = [];
   Map<String,double> igs = {};
+  /*
+   * Fonction qui permet de récupérer les données de la base et de les stocker dans différente variable.
+   */
   void _refreshData() async {
     final data = await menu.getListIngredients();
     setState(() {
