@@ -58,7 +58,7 @@ class _listIngredientState extends State<listIngredient> {
                     value: chk[i],
                     onChanged: (bool? val){ setState(() {chk[i] = val!;});},
                     title: Text(igsKey[i]),
-                    subtitle: Text('quantite : ${igs[igsKey[i]]}'),
+                    subtitle: Text('quantite : ${igs[igsKey[i]]} g'),
                   ),
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miam/Menu/models/menu.dart';
 import 'package:miam/Menu/widgets/NewRecette.dart';
+//1200 / 900
 
 class listMenu extends StatelessWidget {
   listMenu({Key? key, this.menus}) : super(key: key);
@@ -31,9 +32,9 @@ class listMenu extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0)),
                   child: ListTile(
-                    leading: Image.asset("assets/images/img" + (i + 1).toString() + ".jpg"),
+                    leading: Image.asset("assets/images/img${i + 1}.jpg"),
                     title: Text("${_jours[i]} : ${menu.recettes[i].titre}"),
-                    subtitle: Text('ingredients : '),
+                    subtitle: Text('ingredients : ' ),
                     trailing: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

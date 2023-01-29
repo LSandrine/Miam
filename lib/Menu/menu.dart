@@ -33,11 +33,13 @@ class _MenuPageState extends State<MenuPage> {
     final menus = await DatabaseHelper.getMenus();
     final elements = await DatabaseHelper.getElementIgs();
     final recettes = await DatabaseHelper.getRecettes();
+
     setState(() {
       _elements = elements;
       _menus = menus;
       _recettes = recettes;
       _isLoading = false;
+
     });
   }
 

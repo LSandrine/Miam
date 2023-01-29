@@ -106,6 +106,8 @@ class DatabaseHelper {
 
   /*
    * Fonction d'insertion d'une nouvelle ligne de data pour la table Recette.
+   * @param Fields, variable de la recette.
+   * @return int, id inserted.
    */
   static Future<int> createRecette(
       String titre,
@@ -127,32 +129,38 @@ class DatabaseHelper {
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
   }
 
+
   static Future<List<Recette>> getRecettes() async {
     final db = await DatabaseHelper.db();
     final List<Map<String, dynamic>> res =
         await db.query('Recette', orderBy: "id");
-    return List.generate(res.length, (i) {
-      return Recette(
-          id: res[i]['id'],
-          titre: res[i]['titre'],
-          etapes: res[i]['etapes'],
-          ingredients: <Ingredient>[],
-          tmpCuisson: res[i]['tmpCuisson'],
-          tmpPreparation: res[i]['tmpPreparation'],
-          calories: res[i]['calories'],
-          estEquilibre: res[i]['estEquilibre']);
-    });
+    List<Recette> lr = [];
+    for(var r in res){
+      List<Ingredient> lig = await getIngredientsByRecette(r['id']);
+      Recette tmp = Recette(
+          id: r['id'],
+          titre: r['titre'],
+          etapes: r['etapes'],
+          ingredients: lig,
+          tmpCuisson: r['tmpCuisson'],
+          tmpPreparation: r['tmpPreparation'],
+          calories: r['calories'],
+          estEquilibre: r['estEquilibre']);
+      lr.add(tmp);
+    }
+    return lr;
   }
 
   static Future<Recette> getRecette(int id) async {
     final db = await DatabaseHelper.db();
     final List<Map<String, dynamic>> res =
         await db.query('Recette', where: "id = ?", whereArgs: [id], limit: 1);
+    List<Ingredient> lig = await getIngredientsByRecette(res[0]['id']);
     return Recette(
         id: res[0]['id'],
         titre: res[0]['titre'],
         etapes: res[0]['etapes'],
-        ingredients: <Ingredient>[],
+        ingredients: lig,
         tmpCuisson: res[0]['tmpCuisson'],
         tmpPreparation: res[0]['tmpPreparation'],
         calories: res[0]['calories'],
@@ -192,7 +200,7 @@ class DatabaseHelper {
   //// INGREDIENTS
 
   /*
-   * Fonction d'insertion d'une nouvelle ligne de data pour la table Recette.
+   * Fonction d'insertion d'une nouvelle ligne de data pour la table.
    */
   static Future<int> createIngredient(
       int idRecette, int idElementIg, double quantite) async {
@@ -224,7 +232,8 @@ class DatabaseHelper {
     return List.generate(res.length, (i) {
       return Ingredient(
           id: res[i]['idRecette'],
-          elementIg: ElementIg(id:res[i]['idElement'],nom: '') ,
+          elementIg: ElementIg(id:res[i]['idElement'],
+              nom: '') ,
           quantite: res[i]['quantite']);
     });
   }

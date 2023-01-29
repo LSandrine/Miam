@@ -1,5 +1,7 @@
 import 'package:miam/Menu/models/ingredient.dart';
 
+import '../data/database_helper.dart';
+
 
 class Recette {
 
@@ -12,6 +14,8 @@ class Recette {
   final double calories;
   final String estEquilibre;
 
+  static String listIg = '';
+
   const Recette({
     required this.id,
     required this.titre,
@@ -20,7 +24,7 @@ class Recette {
     required this.tmpPreparation,
     required this.tmpCuisson,
     required this.calories,
-    required this.estEquilibre
+    required this.estEquilibre,
   });
 
   Map<String,dynamic> toMap(){
@@ -44,13 +48,15 @@ class Recette {
     List<Recette> lr = [];
     return lr;
   }
-  String getListElements(){
-    String txt = "";
-    for(Ingredient igd in ingredients){
-      txt += igd.toString()+", ";
+  void getListElements() async {
+    List<ElementIg> elem = [];
+    for(Ingredient ig in ingredients){
+      ElementIg e = await DatabaseHelper.getElementIg(ig.elementIg.id);
+      elem.add(e);
     }
-    return txt;
+    listIg =  (List.generate(elem.length,(i) {return elem[i].nom;})).join(' ');
   }
+
 
 }
 

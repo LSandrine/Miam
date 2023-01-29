@@ -4,29 +4,32 @@ import 'package:miam/Menu/models/recette.dart';
 import '../data/database_helper.dart';
 
 class newRecette extends StatefulWidget {
-  const newRecette({Key? key, required this.elements,this.recette}) : super(key: key);
+  const newRecette({Key? key, required this.elements, this.recette})
+      : super(key: key);
   final List<ElementIg> elements;
   final Recette? recette;
   @override
-  State<newRecette> createState() => _newRecetteState(elements : elements,recette:recette);
+  State<newRecette> createState() =>
+      _newRecetteState(elements: elements, recette: recette);
 }
 
 class _newRecetteState extends State<newRecette> {
   //List<ElementIg> elements = widget.elements;
   List<ElementIg> elements;
   Recette? recette;
-  _newRecetteState({required this.elements,Recette? this.recette});
+  _newRecetteState({required this.elements, Recette? this.recette});
 
   final List<Ingredient> listIngredient = [];
   final TextEditingController _titreController = TextEditingController();
   final TextEditingController _etapesController = TextEditingController();
-  final TextEditingController _tmpPreparationController =        TextEditingController();
+  final TextEditingController _tmpPreparationController =
+      TextEditingController();
   final TextEditingController _tmpCuissonController = TextEditingController();
   final TextEditingController _caloriesController = TextEditingController();
-  final TextEditingController _estEquilibreController =        TextEditingController();
+  final TextEditingController _estEquilibreController = TextEditingController();
 
   //final TextEditingController _ingredientsController = TextEditingController();
-  void clearField(){
+  void clearField() {
     _titreController.text = "";
     _etapesController.text = "";
     _tmpPreparationController.text = "";
@@ -34,6 +37,7 @@ class _newRecetteState extends State<newRecette> {
     _caloriesController.text = "";
     _estEquilibreController.text = 'MODERE';
   }
+
   @override
   void initState() {
     super.initState();
@@ -48,13 +52,13 @@ class _newRecetteState extends State<newRecette> {
       clearField();
     }
   }
+
   final formKey = GlobalKey<FormState>();
-
-
 
   String qtt = '0';
   /*
-   *
+   * Widget d'un formulaire en bas d'écran.
+   * @param List of ElementIg,
    */
   void bottomForm(List<ElementIg> _elementsIg) {
     ElementIg _selectedElement = _elementsIg.first;
@@ -94,13 +98,21 @@ class _newRecetteState extends State<newRecette> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                DropdownButton<ElementIg>(items: items,value: _selectedElement, onChanged: (nVal)=> _selectedElement = nVal!),
+                Container(
+                    width: 300,
+                    child: DropdownButton<ElementIg>(
+                        items: items,
+                        value: _selectedElement,
+                        onChanged: (nVal) => _selectedElement = nVal!)),
                 const SizedBox(
                   height: 10,
                 ),
                 TextField(
-                  decoration: const InputDecoration(hintText: 'Quantité (grammes)'),
-                  onChanged: (txt) {_quantite = txt;},
+                  decoration:
+                      const InputDecoration(hintText: 'Quantité (grammes)'),
+                  onChanged: (txt) {
+                    _quantite = txt;
+                  },
                 ),
                 const SizedBox(
                   height: 20,
@@ -120,8 +132,11 @@ class _newRecetteState extends State<newRecette> {
                         child: const Text("Annuler")),
                     ElevatedButton(
                       onPressed: () async {
-                        ElementIg el =_selectedElement;
-                        Ingredient ig = Ingredient(id: 0, elementIg: el, quantite: double.parse(_quantite));
+                        ElementIg el = _selectedElement;
+                        Ingredient ig = Ingredient(
+                            id: 0,
+                            elementIg: el,
+                            quantite: double.parse(_quantite));
                         // Ajouter aux ingrédients
                         listIngredient.add(ig);
                         // Close the bottomForm
@@ -135,7 +150,6 @@ class _newRecetteState extends State<newRecette> {
             )));
   }
 
-
   //
   @override
   Widget build(BuildContext context) {
@@ -146,112 +160,132 @@ class _newRecetteState extends State<newRecette> {
           left: 15,
           right: 15,
         ),
-        child: Column(children: [
-          SizedBox(
-            height: 20,
-            child: Text(
-                '${recette != null ? 'Modifier ' : 'Ajouter '}une Recette'),
-          ),
-          Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                TextFormField(
-                  controller: _titreController,
-                  validator: formValidatorText,
-                  decoration: const InputDecoration(hintText: 'Titre'),
-                ),
-                TextFormField(
-                  controller: _etapesController,
-                  validator: formValidatorText,
-                  decoration: const InputDecoration(hintText: 'Etapes'),
-                ),
-                TextFormField(
-                  controller: _tmpPreparationController,
-                  validator: formValidatorText,
-                  decoration: const InputDecoration(
-                      hintText: 'Temps de préparation (minutes)'),
-                ),
-                TextFormField(
-                  controller: _tmpCuissonController,
-                  validator: formValidatorText,
-                  decoration: const InputDecoration(
-                      hintText: 'Temps de cuisson (minutes)'),
-                ),
-                TextFormField(
-                  controller: _caloriesController,
-                  validator: formValidatorText,
-                  decoration: const InputDecoration(
-                      hintText: 'Nombre de calories (kcal)'),
-                ),
-                DropdownButtonFormField(
-                  validator: formValidatorText,
-                  decoration: const InputDecoration(hintText: 'Est équilibré ?',
-                    enabledBorder: OutlineInputBorder( //<-- SEE HERE
-                      borderSide: BorderSide(color: Colors.black, width: 2),
-                    ),
-                    focusedBorder: OutlineInputBorder( //<-- SEE HERE
-                      borderSide: BorderSide(color: Colors.black, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: Colors.green,
-                  ),
-                  dropdownColor: Colors.green,
-                  items: <String>['PARFAIT', 'MODERE', 'IMPARFAIT']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    );
-                  }).toList(),
-                  value: _estEquilibreController.text,
-                  onChanged: (String? newValue) {
-                    _estEquilibreController.text = newValue!;
-                  },
-                ),
-                const SizedBox(height: 50,),
-                Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                          ),
-                          onPressed: () {
-                            clearField();
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            if (recette == null) {
-                              await addRecette();
-                            }
-                            if (recette != null) {
-                              await updateRecette(recette!.id);
-                            }
-                            clearField();
-                          }
-                        },
-                        child: Text(recette == null ? 'Créer' : 'Sauvegarder'),
-                      ),
-                    ]),
-              ],
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+              child: Text(
+                  '${recette != null ? 'Modifier ' : 'Ajouter '}une Recette'),
             ),
-          ),
-          FloatingActionButton(
-            child: const Icon(Icons.add_box_sharp,color: Colors.white,),
-            onPressed: () => bottomForm(elements),
-          ),
+            Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  TextFormField(
+                    controller: _titreController,
+                    validator: formValidatorText,
+                    decoration: const InputDecoration(hintText: 'Titre'),
+                  ),
+                  TextFormField(
+                    controller: _etapesController,
+                    validator: formValidatorText,
+                    decoration: const InputDecoration(hintText: 'Etapes'),
+                  ),
+                  TextFormField(
+                    controller: _tmpPreparationController,
+                    validator: formValidatorText,
+                    decoration: const InputDecoration(
+                        hintText: 'Temps de préparation (minutes)'),
+                  ),
+                  TextFormField(
+                    controller: _tmpCuissonController,
+                    validator: formValidatorText,
+                    decoration: const InputDecoration(
+                        hintText: 'Temps de cuisson (minutes)'),
+                  ),
+                  TextFormField(
+                    controller: _caloriesController,
+                    validator: formValidatorText,
+                    decoration: const InputDecoration(
+                        hintText: 'Nombre de calories (kcal)'),
+                  ),
+                  DropdownButtonFormField(
+                    validator: formValidatorText,
+                    decoration: const InputDecoration(
+                      hintText: 'Est équilibré ?',
+                      focusedBorder: OutlineInputBorder(
+                        //<-- SEE HERE
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                      filled: true,
+                      fillColor: Colors.green,
+                    ),
+                    dropdownColor: Colors.green,
+                    items: <String>['PARFAIT', 'MODERE', 'IMPARFAIT']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      );
+                    }).toList(),
+                    value: _estEquilibreController.text,
+                    onChanged: (String? newValue) {
+                      _estEquilibreController.text = newValue!;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                            ),
+                            onPressed: () {
+                              clearField();
+                            },
+                            child: const Text("Annuler")),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              if (recette == null) {
+                                await addRecette();
+                              }
+                              if (recette != null) {
+                                await updateRecette(recette!.id);
+                              }
+                              clearField();
+                            }
+                          },
+                          child:
+                              Text(recette == null ? 'Créer' : 'Sauvegarder'),
+                        ),
+                      ]),
+                ],
+              ),
+            ),
+            FloatingActionButton(
+              child: const Icon(
+                Icons.add_box_sharp,
+                color: Colors.white,
+              ),
+              onPressed: () => bottomForm(elements),
+            ),
+            /*
+            listIngredient.isEmpty
+                ? const Text('Aucun ingrédients')
+                : ListView.builder(
+                    itemCount: listIngredient.length,
+                    itemBuilder: (context, index) => Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0)),
+                      child: ListTile(
+                        title: Text(listIngredient[index].elementIg.nom),
+                      ),),
+            )*/
+            ],
 
-        ],)
-    );
+        ));
   }
+
   /*
    * Function de validation des champ text
    * @param String, valeur à tester.
@@ -261,6 +295,7 @@ class _newRecetteState extends State<newRecette> {
     if (value!.isEmpty) return 'Field is Required';
     return null;
   }
+
 /*
    * Function de validation des champ double
    * @param String, valeur à transformer en double.
@@ -276,7 +311,6 @@ class _newRecetteState extends State<newRecette> {
     return null;
   }
 
-
 // Insert a new data to the database
 
   /*
@@ -284,13 +318,16 @@ class _newRecetteState extends State<newRecette> {
    */
   Future<void> addRecette() async {
     int idR = await DatabaseHelper.createRecette(
-        _titreController.text, _etapesController.text, double.parse(_tmpPreparationController.text),
-        double.parse(_tmpCuissonController.text), double.parse(_caloriesController.text), _estEquilibreController.text);
+        _titreController.text,
+        _etapesController.text,
+        double.parse(_tmpPreparationController.text),
+        double.parse(_tmpCuissonController.text),
+        double.parse(_caloriesController.text),
+        _estEquilibreController.text);
 
-    for(Ingredient ig in listIngredient){
+    for (Ingredient ig in listIngredient) {
       await DatabaseHelper.createIngredient(idR, ig.elementIg.id, ig.quantite);
     }
-
   }
 
   /*
@@ -298,9 +335,14 @@ class _newRecetteState extends State<newRecette> {
    * @param int, id de la ligne a modifier.
    */
   Future<void> updateRecette(int id) async {
-    await DatabaseHelper.updateRecette(id,
-        _titreController.text, _etapesController.text, double.parse(_tmpPreparationController.text),
-        double.parse(_tmpCuissonController.text), double.parse(_caloriesController.text), _estEquilibreController.text);
+    await DatabaseHelper.updateRecette(
+        id,
+        _titreController.text,
+        _etapesController.text,
+        double.parse(_tmpPreparationController.text),
+        double.parse(_tmpCuissonController.text),
+        double.parse(_caloriesController.text),
+        _estEquilibreController.text);
   }
 
   /*
